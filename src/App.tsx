@@ -20,10 +20,10 @@ function App() {
   const [guess, setGuess] = useState<string>('')
   const [step, setStep] = useState<number>(0)
   const [isGameOver, setIsGameOver] = useState<boolean>(false)
-
+  
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if(isGameOver) return 
+      if (isGameOver) return
 
       const key = event.key.toLowerCase()
 
@@ -40,7 +40,7 @@ function App() {
         setGuess((prevGuess) => prevGuess.slice(0, -1))
       }
 
-      if (key.length === 1 && key >= "a" && key <= "z") {
+      if (key.length === 1 && /^[a-z]$/.test(key)) {
         setGuess((prevGuess) => {
           if (prevGuess.length === COL) {
             return prevGuess
@@ -78,17 +78,23 @@ function App() {
     );
   }, [guess, step, grid]);
 
-const handleGameReset = () =>{
-  setGrid(initialCellState)
-  setGuess('')
-  setStep(0)
-  setIsGameOver(false)
-}
+  const handleKeyPress = useCallback((key: string) => {
+    if (guess.length >= ROW) return; 
+
+    setGuess((prevGuess) => prevGuess + key); 
+  }, [guess, ROW]);
+
+  const handleGameReset = () => {
+    setGrid(initialCellState)
+    setGuess('')
+    setStep(0)
+    setIsGameOver(false)
+  }
 
   return <main className='flex flex-col items-center gap-20 h-full py-16'>
     <Grid grid={grid} step={step} answer={ANSWER} />
     {isGameOver && <button onClick={handleGameReset}>Rest Game</button>}
-    <Keyboard />
+    <Keyboard onKeyPress={handleKeyPress} step={step} grid={grid} answer={ANSWER} />
   </main>
 
 }
