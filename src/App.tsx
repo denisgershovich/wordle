@@ -1,10 +1,14 @@
 import { useState } from 'react';
 
+import Keyboard from './components/Keyboard';
+import Grid from './components/Grid';
+
 function App() {
 
-  return     <h1 className="text-3xl font-bold underline text-orange-700">
-  Hello world!
-</h1>
+  return <main>
+    <Grid />
+    <Keyboard />
+  </main>
 
 }
 
