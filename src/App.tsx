@@ -29,18 +29,7 @@ function App() {
       const key = event.key.toLowerCase()
 
       if (key === 'enter') {
-        if (guess.length < COL) return
-
-        setStep(step + 1)
-        setGuess('')
-
-        if (guess === answer) {
-          alert('win');
-          setIsGameOver(true);
-        } else if (step === ROW - 1 && grid[step][COL - 2].guess) {
-          setIsGameOver(true);
-        }
-
+        handleEnterPress()
       }
 
       if (key === 'backspace') {
@@ -91,6 +80,22 @@ function App() {
     setGuess((prevGuess) => prevGuess + key);
   }, [guess, ROW]);
 
+  const handleEnterPress = useCallback(() => {
+
+    if (guess.length < COL) return;
+
+    setStep((prevStep) => prevStep + 1);
+    setGuess('');
+
+    if (guess === answer) {
+      alert('win');
+      setIsGameOver(true);
+    } else if (step === ROW - 1 && grid[step][COL - 2].guess) {
+      setIsGameOver(true);
+    }
+
+  }, [guess, step, answer, grid]);
+
   const handleGameReset = () => {
     setAnswer(dictionary[Math.floor(Math.random() * dictionary.length)]);
     setGrid(initialCellState)
@@ -99,10 +104,22 @@ function App() {
     setIsGameOver(false)
   }
 
-  return <main className='flex flex-col items-center gap-20 h-full py-16'>
+  return <main className='flex flex-col items-center justify-between h-screen bg-gray-50 gap-2'>
     <Grid grid={grid} step={step} answer={answer} />
-    {isGameOver && <button onClick={handleGameReset}>Rest Game</button>}
-    <Keyboard onKeyPress={handleKeyPress} step={step} grid={grid} answer={answer} />
+
+    {isGameOver &&
+      <button onClick={handleGameReset}
+        className='text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'>
+        Rest Game
+      </button>}
+
+    <Keyboard
+      onKeyPress={handleKeyPress}
+      onRemove={() => setGuess((prevGuess) => prevGuess.slice(0, -1))}
+      onEnter={handleEnterPress}
+      step={step}
+      grid={grid}
+      answer={answer} />
   </main>
 
 }

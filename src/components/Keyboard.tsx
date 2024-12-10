@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { type ReactNode, useMemo } from 'react';
 
 import clsx from 'clsx';
 
@@ -6,7 +6,7 @@ import type { Cell } from "../interfaces";
 
 const letters = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
-const Keyboard = ({ onKeyPress, step, grid, answer }: { onKeyPress: (key: string) => void, step: number, grid: Cell[][], answer: string }) => {
+const Keyboard = ({ onKeyPress, onRemove, onEnter, step, grid, answer }: { onKeyPress: (key: string) => void, onRemove: () => void, onEnter: () => void, step: number, grid: Cell[][], answer: string }) => {
 
   const letterColors = useMemo(() => {
     const colors: Record<string, string> = {};
@@ -30,30 +30,57 @@ const Keyboard = ({ onKeyPress, step, grid, answer }: { onKeyPress: (key: string
       }
 
       if (!isGuessed) colors[letter] = '';
-      else if (isCorrectIndex) colors[letter] = 'bg-green-400';
-      else if (isInAnswer) colors[letter] = 'bg-gray-400';
-      else colors[letter] = 'bg-black';
+      else if (isCorrectIndex) colors[letter] = '!bg-green-400';
+      else if (isInAnswer) colors[letter] = '!bg-gray-400';
+      else colors[letter] = '!bg-black text-white';
     });
 
     return colors;
   }, [grid, step, answer]);
 
   return (
-    <div className=" border flex flex-wrap justify-center p-8 gap-2 ">
+    <div className="flex flex-wrap justify-center p-8 gap-2 ">
       {letters.map((letter) => (
-        <button
+        <Button
           key={letter}
           onClick={(event) => event.detail && onKeyPress(letter)}
-          className={clsx(
-            "bg-blue-500 text-white py-2 px-8 rounded hover:bg-blue-600 focus:outline-none",
-            step > 0 && step < 6 && letterColors[letter]
-          )}
+          className={step > 0 && step < 6 ? letterColors[letter] : ''}
         >
           {letter.toUpperCase()}
-        </button>
+        </Button>
       ))}
+      <Button className='text-2xl hover:bg-red-400' onClick={onRemove}>&larr;</Button>
+      <Button className='w-16 hover:bg-green-400' onClick={onEnter}>ENTER</Button>
     </div>
   )
 }
+
+interface ButtonProps {
+
+  onClick?: (event: any) => void;
+  className?: string
+  children: ReactNode
+}
+
+
+const Button: React.FC<ButtonProps> = ({
+  onClick,
+  className,
+  children
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className={clsx(
+        "bg-gray-200 font-semibold w-14 h-14 rounded hover:bg-gray-400 focus:outline-none border",
+        className
+      )}
+
+    >
+      {children}
+    </button>
+  );
+};
+
 
 export default Keyboard
