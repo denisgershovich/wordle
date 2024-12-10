@@ -1,7 +1,7 @@
 interface Cell {
-    value: string | null,
+    guess: string | null,
     isMatch: boolean,
-    isInSolution: boolean
+    isInAnswer: boolean
   }
   
   export type { Cell }

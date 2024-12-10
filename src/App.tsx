@@ -9,35 +9,49 @@ const COL = 5
 
 const initialCellState: Cell[][] = Array.from({ length: ROW }, () =>
   Array.from({ length: COL }, () => ({
-    value: null,
+    guess: null,
     isMatch: false,
-    isInSolution: false
+    isInAnswer: false
   }))
 );
 
 function App() {
   const [grid, setGrid] = useState(initialCellState)
+  const [guess, setGuess] = useState('')
 
   useEffect(() => {
-    const handleKeyDown = (event:KeyboardEvent) => {
-      const normalizedKey = event.key.toLowerCase()
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase()
 
-      if(normalizedKey.length === 1 && normalizedKey >= "a" && normalizedKey <= "z") {
-        console.log(`Key pressed: ${normalizedKey}`); 
+      if (key === 'enter') {
+        //check for win 
       }
- 
 
+      if (key === 'backspace') {
+        setGuess((prevGuess) => prevGuess.slice(0, -1))
+      }
+
+      if (key.length === 1 && key >= "a" && key <= "z") {
+        setGuess((prevGuess) => {
+          if (prevGuess.length === COL) {
+            return prevGuess
+          }
+
+          return prevGuess + key
+        })
+      }
     }
 
-    document.addEventListener('keydown', handleKeyDown, true);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
 
-  }, [])
+  }, [guess])
 
   return <main className='flex flex-col items-center gap-20 h-full py-16'>
+    {guess}
     <Grid grid={grid} />
     <Keyboard />
   </main>
