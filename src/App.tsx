@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Keyboard from './components/Keyboard';
 import Grid from './components/Grid';
 import type { Cell } from './interfaces';
-import dictionary from '../public/data/dictionary.json';
+import dictionary from './data/dictionary.json';
 
 const ROW = 6
 const COL = 5
@@ -104,12 +104,12 @@ function App() {
     setIsGameOver(false)
   }
 
-  return <main className='flex flex-col items-center justify-between h-screen bg-gray-50 gap-2'>
+  return <main className='flex flex-col items-center justify-between h-screen bg-gray-50 '>
     <Grid grid={grid} step={step} answer={answer} />
 
     {isGameOver &&
       <button onClick={handleGameReset}
-        className='text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'>
+        className='text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
         Rest Game
       </button>}
 

@@ -39,7 +39,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step
   }, [grid, step, answer]);
 
   return (
-    <div className="flex flex-wrap justify-center p-8 gap-2 ">
+    <div className="flex flex-wrap justify-center px-8 py-4 gap-2 max-w-[600px]">
       {letters.map((letter) => (
         <Button
           key={letter}

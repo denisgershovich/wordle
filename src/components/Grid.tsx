@@ -4,7 +4,7 @@ import type { Cell } from "../interfaces"
 
 const Grid = ({ grid, step, answer }: { grid: Cell[][], step: number, answer: string }) => {
 
-    return <div className="flex flex-col gap-1.5 pt-10">
+    return <div className="flex flex-col gap-1.5 pt-8">
         {grid.map((row, rowIndex) => {
             return <div className="flex gap-1.5" key={rowIndex}>
                 {row.map(({ id, guess }, cellIndex) =>
