@@ -6,7 +6,7 @@ import type { Cell } from "../interfaces";
 
 const letters = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
-const Keyboard = ({ onKeyPress, onRemove, onEnter, step, grid, answer }: { onKeyPress: (key: string) => void, onRemove: () => void, onEnter: () => void, step: number, grid: Cell[][], answer: string }) => {
+const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step, grid, answer }) => {
 
   const letterColors = useMemo(() => {
     const colors: Record<string, string> = {};
@@ -53,6 +53,15 @@ const Keyboard = ({ onKeyPress, onRemove, onEnter, step, grid, answer }: { onKey
       <Button className='w-16 hover:bg-green-400' onClick={onEnter}>ENTER</Button>
     </div>
   )
+}
+
+interface KeyboardProps {
+  onKeyPress: (key: string) => void;
+  onRemove: () => void;
+  onEnter: () => void;
+  step: number;
+  grid: Cell[][];
+  answer: string;
 }
 
 interface ButtonProps {
