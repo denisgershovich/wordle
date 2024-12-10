@@ -43,7 +43,7 @@ const Keyboard = ({ onKeyPress, step, grid, answer }: { onKeyPress: (key: string
       {letters.map((letter) => (
         <button
           key={letter}
-          onClick={() => onKeyPress(letter)}
+          onClick={(event) => event.detail && onKeyPress(letter)}
           className={clsx(
             "bg-blue-500 text-white py-2 px-8 rounded hover:bg-blue-600 focus:outline-none",
             step > 0 && step < 6 && letterColors[letter]
