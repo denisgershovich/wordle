@@ -10,9 +10,9 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step
   const seenLettersRef = useRef<Record<string, string>>({});
 
   const findColor = useMemo(() => {
-    return (letter: string) => {
+    return (letter: string): string => {
       if (step === 0) return '';
-  
+
       const seenLetters = seenLettersRef.current;
 
       grid[step - 1].find((guess) => {
@@ -34,7 +34,7 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step
 
         return false;
       });
-  
+
       return seenLetters[letter];
     };
   }, [step]);
@@ -48,13 +48,12 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step
           onClick={(event) => event.detail && onKeyPress(letter)}
           className={findColor(letter)}
         >
-
           {letter.toUpperCase()}
         </Button>
       ))}
 
       <Button className='text-2xl hover:bg-red-400' onClick={onRemove}>&larr;</Button>
-      <Button className='w-16 hover:bg-green-400 capitalize' onClick={onEnter}>enter</Button>
+      <Button className='w-16 hover:bg-green-400 capitalize' onClick={onEnter}>Enter</Button>
     </div>
   )
 }

@@ -3,8 +3,8 @@ import { useState, useEffect, useCallback } from 'react';
 import Keyboard from './components/Keyboard';
 import Grid from './components/Grid';
 import dictionary from './data/dictionary.json';
-import type { Cell } from './interfaces';
 import Modal from './components/Modal';
+import type { Cell } from './interfaces';
 
 const GRID_ROWS = 6;
 const GRID_COLS = 5;
@@ -42,9 +42,7 @@ function App() {
       const normalizedKey = event.key.toLowerCase();
 
       if (/^[a-z]$/.test(normalizedKey)) {
-        setGuess((prevGuess) => {
-          return prevGuess.length < GRID_COLS ? prevGuess + normalizedKey : prevGuess;
-        });
+        setGuess(prevGuess => prevGuess.length < GRID_COLS ? prevGuess + normalizedKey : prevGuess);
       }
     };
 
@@ -52,10 +50,7 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [guess, isGameOver])
 
   const renderGrid = useCallback(() => {
@@ -65,7 +60,7 @@ function App() {
 
         return row.map((cell, colIndex) => {
           const currentGuess = guess[colIndex];
-          
+
           return {
             ...cell,
             guess: currentGuess,
@@ -80,14 +75,14 @@ function App() {
   const handleKeyPress = useCallback((key: string) => {
     if (guess.length >= GRID_ROWS) return;
 
-    setGuess((prevGuess) => prevGuess + key);
+    setGuess(prevGuess => prevGuess + key);
   }, [guess, GRID_ROWS]);
 
   const handleEnterPress = useCallback(() => {
 
     if (guess.length < GRID_COLS) return;
 
-    setStep((prevStep) => prevStep + 1);
+    setStep(prevStep => prevStep + 1);
     setGuess('');
 
     if (guess === answer) {
@@ -106,7 +101,7 @@ function App() {
     setIsGameOver(false)
   }
 
-  return <main className='flex flex-col items-center justify-between h-screen bg-gray-50'>
+  return <main className='flex flex-col items-center sm:gap-5 h-screen bg-gray-50'>
     <Grid grid={grid} step={step} />
 
     <Keyboard
@@ -118,7 +113,7 @@ function App() {
     />
 
     <Modal isOpen={isGameOver}>
-      <div className='flex flex-col items-center  gap-3'>
+      <div className='flex flex-col items-center gap-3'>
         <span className='uppercase font-semibold'>answer:{" "}{answer}</span>
 
         <button onClick={handleGameReset}
