@@ -13,6 +13,8 @@ const initialCellState: Cell[][] = Array.from({ length: GRID_ROWS }, () =>
   Array.from({ length: GRID_COLS }, () => ({
     id: crypto.randomUUID(),
     guess: null,
+    igGuessed: false,
+    isOnGrid: false
   }))
 );
 
@@ -56,19 +58,24 @@ function App() {
 
   }, [guess, isGameOver])
 
-
   const renderGrid = useCallback(() => {
     setGrid((prevGrid) =>
-      prevGrid.map((row, rowIndex) =>
-        rowIndex === step
-          ? row.map((cell, colIndex) => ({
+      prevGrid.map((row, rowIndex) => {
+        if (rowIndex !== step) return row;
+
+        return row.map((cell, colIndex) => {
+          const currentGuess = guess[colIndex];
+          
+          return {
             ...cell,
-            guess: guess[colIndex],
-          }))
-          : row
-      )
+            guess: currentGuess,
+            igGuessed: currentGuess === answer[colIndex],
+            isOnGrid: answer.includes(currentGuess),
+          };
+        });
+      })
     );
-  }, [guess, step]);
+  }, [guess, step, answer]);
 
   const handleKeyPress = useCallback((key: string) => {
     if (guess.length >= GRID_ROWS) return;
@@ -84,7 +91,6 @@ function App() {
     setGuess('');
 
     if (guess === answer) {
-      alert('win');
       setIsGameOver(true);
     } else if (step === GRID_ROWS - 1 && grid[step][GRID_COLS - 2].guess) {
       setIsGameOver(true);
@@ -101,15 +107,15 @@ function App() {
   }
 
   return <main className='flex flex-col items-center justify-between h-screen bg-gray-50'>
-    <Grid grid={grid} step={step} answer={answer} />
-    
+    <Grid grid={grid} step={step} />
+
     <Keyboard
       onKeyPress={handleKeyPress}
       onRemove={() => setGuess((prevGuess) => prevGuess.slice(0, -1))}
       onEnter={handleEnterPress}
       step={step}
       grid={grid}
-      answer={answer} />
+    />
 
     <Modal isOpen={isGameOver}>
       <div className='flex flex-col items-center  gap-3'>
