@@ -9,7 +9,7 @@ const Grid = ({ grid, step, answer }: { grid: Cell[][], step: number, answer: st
             return <div className="flex gap-1.5" key={rowIndex}>
                 {row.map(({ id, guess }, cellIndex) =>
                 (<div key={id} className={clsx(
-                    'border-2 w-16 h-16 flex items-center justify-center text-gray-900',
+                    'transition border-2 w-16 h-16 flex items-center justify-center text-gray-900',
                     guess && 'border-black/50',
                     step !== rowIndex && guess && {
                         'bg-gray-400': answer.includes(guess),
