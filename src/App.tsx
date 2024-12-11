@@ -4,6 +4,7 @@ import Keyboard from './components/Keyboard';
 import Grid from './components/Grid';
 import dictionary from './data/dictionary.json';
 import type { Cell } from './interfaces';
+import Modal from './components/Modal';
 
 const GRID_ROWS = 6;
 const GRID_COLS = 5;
@@ -101,13 +102,7 @@ function App() {
 
   return <main className='flex flex-col items-center justify-between h-screen bg-gray-50'>
     <Grid grid={grid} step={step} answer={answer} />
-
-    {isGameOver &&
-      <button onClick={handleGameReset}
-        className='text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
-        Rest Game
-      </button>}
-
+    
     <Keyboard
       onKeyPress={handleKeyPress}
       onRemove={() => setGuess((prevGuess) => prevGuess.slice(0, -1))}
@@ -115,6 +110,17 @@ function App() {
       step={step}
       grid={grid}
       answer={answer} />
+
+    <Modal isOpen={isGameOver}>
+      <div className='flex flex-col items-center  gap-3'>
+        <span className='uppercase font-semibold'>answer:{" "}{answer}</span>
+
+        <button onClick={handleGameReset}
+          className='text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
+          Rest Game
+        </button>
+      </div>
+    </Modal>
   </main>
 
 }
