@@ -1,4 +1,4 @@
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useRef } from 'react';
 
 import clsx from 'clsx';
 
@@ -6,39 +6,39 @@ import type { Cell } from "../interfaces";
 
 const letters = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
-const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step, grid, answer }) => {
+const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step, grid }) => {
+  const seenLettersRef = useRef<Record<string, string>>({});
 
-  const letterColors = useMemo(() => {
-    if (step < 1) return {}
+  const findColor = useMemo(() => {
+    return (letter: string) => {
+      if (step === 0) return '';
+  
+      const seenLetters = seenLettersRef.current;
 
-    const colors: Record<string, string> = {};
-
-    letters.forEach((letter) => {
-      let isGuessed = false;
-      let isInAnswer = false;
-      let isCorrectIndex = false;
-
-      for (let i = 0; i < step; i++) {
-        grid[i].forEach((cell, index) => {
-          if (cell.guess === letter) {
-            isGuessed = true;
-            if (cell.guess === answer[index]) {
-              isCorrectIndex = true;
-            } else if (answer.includes(letter)) {
-              isInAnswer = true;
-            }
+      grid[step - 1].find((guess) => {
+        if (guess.guess === letter) {
+          if (guess.igGuessed) {
+            seenLetters[letter] = 'bg-green-400';
+            return true;
           }
-        });
-      }
 
-      if (!isGuessed) colors[letter] = '';
-      else if (isCorrectIndex) colors[letter] = '!bg-green-400';
-      else if (isInAnswer) colors[letter] = '!bg-gray-400';
-      else colors[letter] = '!bg-black text-white';
-    });
+          if (guess.isOnGrid) {
+            seenLetters[letter] = 'bg-gray-400';
+            return true;
+          }
 
-    return colors;
-  }, [grid, step, answer]);
+          seenLetters[letter] = 'bg-black text-white';
+
+          return true;
+        }
+
+        return false;
+      });
+  
+      return seenLetters[letter];
+    };
+  }, [step]);
+
 
   return (
     <div className="flex flex-wrap justify-center px-8 py-4 gap-2 max-w-[600px]">
@@ -46,8 +46,9 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step
         <Button
           key={letter}
           onClick={(event) => event.detail && onKeyPress(letter)}
-          className={step > 0 ? letterColors[letter] : ''}
+          className={findColor(letter)}
         >
+
           {letter.toUpperCase()}
         </Button>
       ))}
@@ -64,7 +65,6 @@ interface KeyboardProps {
   onEnter: () => void;
   step: number;
   grid: Cell[][];
-  answer: string;
 }
 
 interface ButtonProps {
