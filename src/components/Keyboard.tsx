@@ -9,6 +9,8 @@ const letters = 'abcdefghijklmnopqrstuvwxyz'.split('')
 const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step, grid, answer }) => {
 
   const letterColors = useMemo(() => {
+    if (step < 1) return {}
+
     const colors: Record<string, string> = {};
 
     letters.forEach((letter) => {
@@ -44,13 +46,14 @@ const Keyboard: React.FC<KeyboardProps> = ({ onKeyPress, onRemove, onEnter, step
         <Button
           key={letter}
           onClick={(event) => event.detail && onKeyPress(letter)}
-          className={step > 0 && step < 6 ? letterColors[letter] : ''}
+          className={step > 0 ? letterColors[letter] : ''}
         >
           {letter.toUpperCase()}
         </Button>
       ))}
+
       <Button className='text-2xl hover:bg-red-400' onClick={onRemove}>&larr;</Button>
-      <Button className='w-16 hover:bg-green-400' onClick={onEnter}>ENTER</Button>
+      <Button className='w-16 hover:bg-green-400 capitalize' onClick={onEnter}>enter</Button>
     </div>
   )
 }
@@ -65,12 +68,10 @@ interface KeyboardProps {
 }
 
 interface ButtonProps {
-
-  onClick?: (event: any) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className?: string
   children: ReactNode
 }
-
 
 const Button: React.FC<ButtonProps> = ({
   onClick,
@@ -81,10 +82,9 @@ const Button: React.FC<ButtonProps> = ({
     <button
       onClick={onClick}
       className={clsx(
-        "bg-gray-200 font-semibold w-14 h-14 rounded hover:bg-gray-400 focus:outline-none border",
+        "transition bg-gray-200 shadow font-semibold w-14 h-14 rounded hover:bg-gray-400 focus:outline-none border",
         className
       )}
-
     >
       {children}
     </button>

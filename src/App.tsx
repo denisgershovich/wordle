@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 
 import Keyboard from './components/Keyboard';
 import Grid from './components/Grid';
-import type { Cell } from './interfaces';
 import dictionary from './data/dictionary.json';
+import type { Cell } from './interfaces';
 
-const ROW = 6
-const COL = 5
+const GRID_ROWS = 6;
+const GRID_COLS = 5;
 
-const initialCellState: Cell[][] = Array.from({ length: ROW }, () =>
-  Array.from({ length: COL }, () => ({
+const initialCellState: Cell[][] = Array.from({ length: GRID_ROWS }, () =>
+  Array.from({ length: GRID_COLS }, () => ({
     id: crypto.randomUUID(),
     guess: null,
   }))
@@ -23,29 +23,29 @@ function App() {
   const [isGameOver, setIsGameOver] = useState<boolean>(false)
 
   useEffect(() => {
+    if (isGameOver) return;
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (isGameOver) return
-
-      const key = event.key.toLowerCase()
-
-      if (key === 'enter') {
-        handleEnterPress()
+      if (event.key === 'Enter') {
+        handleEnterPress();
+        return;
       }
 
-      if (key === 'backspace') {
-        setGuess((prevGuess) => prevGuess.slice(0, -1))
+      if (event.key === 'Backspace') {
+        setGuess((prevGuess) => prevGuess.slice(0, -1));
+        return;
       }
 
-      if (key.length === 1 && /^[a-z]$/.test(key)) {
+      const normalizedKey = event.key.toLowerCase();
+
+      if (/^[a-z]$/.test(normalizedKey)) {
         setGuess((prevGuess) => {
-          if (prevGuess.length === COL) {
-            return prevGuess
-          }
-
-          return prevGuess + key
-        })
+          return prevGuess.length < GRID_COLS ? prevGuess + normalizedKey : prevGuess;
+        });
       }
-    }
+    };
+
+    renderGrid();
 
     window.addEventListener('keydown', handleKeyDown);
 
@@ -55,13 +55,8 @@ function App() {
 
   }, [guess, isGameOver])
 
-  useEffect(() => {
-    renderGrid();
-  }, [guess]);
 
   const renderGrid = useCallback(() => {
-    if (grid.length < ROW) return;
-
     setGrid((prevGrid) =>
       prevGrid.map((row, rowIndex) =>
         rowIndex === step
@@ -72,17 +67,17 @@ function App() {
           : row
       )
     );
-  }, [guess, step, grid]);
+  }, [guess, step]);
 
   const handleKeyPress = useCallback((key: string) => {
-    if (guess.length >= ROW) return;
+    if (guess.length >= GRID_ROWS) return;
 
     setGuess((prevGuess) => prevGuess + key);
-  }, [guess, ROW]);
+  }, [guess, GRID_ROWS]);
 
   const handleEnterPress = useCallback(() => {
 
-    if (guess.length < COL) return;
+    if (guess.length < GRID_COLS) return;
 
     setStep((prevStep) => prevStep + 1);
     setGuess('');
@@ -90,7 +85,7 @@ function App() {
     if (guess === answer) {
       alert('win');
       setIsGameOver(true);
-    } else if (step === ROW - 1 && grid[step][COL - 2].guess) {
+    } else if (step === GRID_ROWS - 1 && grid[step][GRID_COLS - 2].guess) {
       setIsGameOver(true);
     }
 
@@ -104,7 +99,7 @@ function App() {
     setIsGameOver(false)
   }
 
-  return <main className='flex flex-col items-center justify-between h-screen bg-gray-50 '>
+  return <main className='flex flex-col items-center justify-between h-screen bg-gray-50'>
     <Grid grid={grid} step={step} answer={answer} />
 
     {isGameOver &&
